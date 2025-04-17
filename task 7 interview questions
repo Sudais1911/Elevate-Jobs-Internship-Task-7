@@ -1,0 +1,55 @@
+1.How did you connect Python to a database?
+I used the built-in sqlite3 library in Python to connect to a local SQLite database file. The connection was made using:
+
+import sqlite3
+conn = sqlite3.connect("sales_data.db")
+
+This allowed Python to communicate with the SQLite database directly.
+
+2.What SQL query did you run?
+I ran the following SQL query to get the total quantity sold and total revenue per product:
+
+SELECT 
+    product, 
+    SUM(quantity) AS total_qty, 
+    SUM(quantity * price) AS revenue 
+FROM sales 
+GROUP BY product;
+
+3.What does GROUP BY do?
+GROUP BY groups the data by a specific column — in this case, by product.
+This means that all rows with the same product name are combined so that aggregate functions like SUM() can be applied to each group.
+
+4.How did you calculate revenue?
+Revenue was calculated directly in the SQL query using:
+
+SUM(quantity * price) AS revenue
+This multiplies the quantity and price for each sale and sums them for each product.
+
+5.How did you visualize the result?
+I used the matplotlib library to create a simple bar chart showing the revenue per product:
+
+df.plot(kind='bar', x='product', y='revenue')
+
+The chart was then displayed and saved as a PNG file.
+
+6.What does pandas do in your code?
+pandas was used to:
+
+-Load the SQL query results into a DataFrame for easy handling
+-Display the results in a readable table format
+-Pass the data to matplotlib for plotting
+
+Example:
+import pandas as pd
+df = pd.read_sql_query(query, conn)
+
+7.What’s the benefit of using SQL inside Python?
+Using SQL inside Python:
+-Automates data extraction and analysis
+-Lets me combine SQL querying power with Python’s flexibility (like plotting, filtering, or advanced analytics)
+-Makes the workflow cleaner, especially in scripts or notebooks
+
+8.Could you run the same SQL query directly in DB Browser for SQLite?
+Yes, the same SQL query can be executed directly in DB Browser for SQLite.
+It will return the same results, but without Python’s extra capabilities like data visualization or automation.
