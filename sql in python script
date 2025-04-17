@@ -1,0 +1,65 @@
+import sqlite3
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Step 1: Create the SQLite database and insert sample data
+def create_database():
+    conn = sqlite3.connect('sales_data.db')
+    cursor = conn.cursor()
+
+    # Create the sales table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS sales (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product TEXT,
+            quantity INTEGER,
+            price REAL
+        )
+    ''')
+
+    # Insert sample data
+    sample_data = [
+        ('T-shirt', 10, 15.0),
+        ('Jeans', 5, 40.0),
+        ('T-shirt', 7, 15.0),
+        ('Shoes', 3, 60.0),
+        ('Jeans', 2, 40.0),
+        ('Hat', 4, 10.0),
+        ('Shoes', 1, 60.0),
+        ('T-shirt', 5, 15.0)
+    ]
+
+    cursor.executemany('INSERT INTO sales (product, quantity, price) VALUES (?, ?, ?)', sample_data)
+    conn.commit()
+    conn.close()
+
+# Step 2: Query the database and show summary
+def get_sales_summary():
+    conn = sqlite3.connect('sales_data.db')
+    
+    query = '''
+        SELECT 
+            product, 
+            SUM(quantity) AS total_qty, 
+            SUM(quantity * price) AS revenue 
+        FROM sales 
+        GROUP BY product
+    '''
+    
+    df = pd.read_sql_query(query, conn)
+    conn.close()
+    
+    # Display results
+    print("Sales Summary:\n")
+    print(df)
+    
+    # Step 3: Plot bar chart
+    df.plot(kind='bar', x='product', y='revenue', title='Revenue by Product', legend=False, color='skyblue')
+    plt.ylabel("Revenue ($)")
+    plt.tight_layout()
+    plt.savefig("sales_chart.png")
+    plt.show()
+
+# Run the full process
+create_database()
+get_sales_summary()
